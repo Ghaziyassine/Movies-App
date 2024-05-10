@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker } from 'react-native-maps';
 
-const GOOGLE_MAPS_API_KEY = "YOUR_API_KEY";
+const GOOGLE_MAPS_API_KEY = "AIzaSyBMxEhoXsi6NADSY-yNlubcUg8I1S2wLDg";
+const TMDB_API_KEY = "3c49560e86e331cecaa85fb1f10031fa";
 
 function MapScreen() {
   const [search, setSearch] = useState("");
@@ -24,7 +25,12 @@ function MapScreen() {
         );
         const data = await response.json();
         if (data.results) {
-          setLocations(data.results);
+          const cinemas = data.results;
+          const cinemasWithMovies = await Promise.all(cinemas.map(async (cinema) => {
+            const movies = await fetchMoviesForCinema(cinema.place_id);
+            return { ...cinema, movies };
+          }));
+          setLocations(cinemasWithMovies);
         } else {
           setLocations([]);
         }
@@ -39,25 +45,17 @@ function MapScreen() {
     fetchLocations();
   }, [search]);
 
-  const renderLocations = () => {
-    if (loading) {
-      return <Text style={styles.mainContentText}>Loading...</Text>;
+  const fetchMoviesForCinema = async (cinemaId) => {
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=fr&page=1&region=MA&with_cinema=${cinemaId}`
+      );
+      const data = await response.json();
+      return data.results;
+    } catch (error) {
+      console.error("Error fetching movies for cinema:", error);
+      return [];
     }
-
-    if (locations.length === 0) {
-      return <Text style={styles.mainContentText}>No locations found for "{search}"</Text>;
-    }
-
-    return (
-      <ScrollView>
-        {locations.map((location) => (
-          <View style={styles.locationItem} key={location.id}>
-            <Text style={styles.locationName}>{location.name}</Text>
-            <Text style={styles.locationAddress}>{location.formatted_address}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    );
   };
 
   return (
@@ -77,8 +75,25 @@ function MapScreen() {
           onChangeText={setSearch}
         />
       </View>
-      <MapView style={styles.map} />
-      <View style={styles.resultsContainer}>{renderLocations()}</View>
+      <MapView style={styles.map}>
+        {locations.map((location) => (
+          <Marker
+            key={location.id}
+            coordinate={{
+              latitude: location.geometry.location.lat,
+              longitude: location.geometry.location.lng,
+            }}
+            title={location.name}
+            description={location.formatted_address}
+          >
+            {location.movies.map((movie, index) => (
+              <View key={index}>
+                <Text>{movie.title}</Text>
+              </View>
+            ))}
+          </Marker>
+        ))}
+      </MapView>
     </View>
   );
 }
@@ -107,33 +122,10 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontSize: 18,
   },
-  resultsContainer: {
-    flex: 1,
-    marginTop: 10,
-  },
-  locationItem: {
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#FFF",
-  },
-  locationName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#FFF",
-    marginBottom: 5,
-  },
-  locationAddress: {
-    fontSize: 16,
-    color: "#FFF",
-  },
-  mainContentText: {
-    fontSize: 25,
-    fontWeight: "500",
-    color: "#FFF"
-  },
   map: {
     flex: 1,
   },
 });
 
 export default MapScreen;
+
