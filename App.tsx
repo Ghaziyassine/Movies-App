@@ -8,7 +8,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SearchScreen from "./src/screens/SearchScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import MapScreen from "./src/screens/MapScreen"; 
-import VideoScreen from "./src/screens/VideoScreen"; // Import the VideoScreen component
 
 const Tab = createBottomTabNavigator();
 
@@ -74,20 +73,7 @@ export default function App() {
             component={MapScreen}
           />
 
-          {/* Add the VideoScreen tab */}
-          <Tab.Screen
-            options={{
-              tabBarIcon: ({ focused, color, size }) => (
-                <Ionicons
-                  name="play-circle"
-                  size={focused ? size * 1.3 : size}
-                  color={color}
-                />
-              ),
-            }}
-            name="VideoScreen"
-            component={VideoScreen}
-          />
+         
         </Tab.Navigator>
       </SafeAreaView>
     </NavigationContainer>

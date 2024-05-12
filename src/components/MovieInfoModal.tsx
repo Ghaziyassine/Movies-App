@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, Linking, Keyboard } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, Linking, Keyboard,Platform, ToastAndroid } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import VideoScreen from '../screens/VideoScreen'; // Import the VideoScreen component
 import YoutubePlayer from "react-native-youtube-iframe";
 import MovieCredits from "./MovieCredits";
 import Movie from "../types/Movie";
-import { Video } from "expo-av";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useRef } from "react";
 import { Button, Alert } from "react-native";
-import ytdl from "react-native-ytdl";
+import { shareAsync } from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+
+
 
 interface MovieInfoModalProps {
   movie: Movie;
@@ -40,8 +41,7 @@ const MovieInfoModal: React.FC<MovieInfoModalProps> = ({ movie }) => {
   const [playing, setPlaying] = useState<boolean>(true);
   const [videoId, setVideoId] = useState<string>('');
   const navigation = useNavigation();
-  const [ytVideoLink, setYtVideoLink] = useState("");
-  const [ytAudioLink, setYtAudioLink] = useState("");
+
   useEffect(() => {
     const fetchTrailer = async () => {
       try {
@@ -55,34 +55,69 @@ const MovieInfoModal: React.FC<MovieInfoModalProps> = ({ movie }) => {
     fetchTrailer();
   }, [movie.title]);
   // Inside the MovieInfoModal component
-  
-  
+
+
   const handleMapIconPress = () => {
     navigation.navigate('Map' as never);
   };
-  const downloadFromUrl = async () => {
-   
-      const youtubeURL = "https://www.youtube.com/watch?v=dYPM5Ry3SDc";
-      const basicInfo = await ytdl.getBasicInfo(youtubeURL);
-      const title = basicInfo.player_response.videoDetails.title;
-      const videoUrls = await ytdl(youtubeURL, { quality: '134' });
-      const audioUrls = await ytdl(youtubeURL, {
-        quality: "highestaudio",
-        filter: "audioonly",
-        format: "m4a",
-      });
-      const videoFinalUri = videoUrls[0].url;
-      const audioFinalUri = audioUrls[0].url;
 
-      Alert.alert(
-        "Link Generated",
-        "Link has been generated, tap download now to download video",
-        [{ text: "OK", onPress: () => "" }]
-      );
-      setYtVideoLink(videoFinalUri + "&title=" + title);
-      setYtAudioLink(audioFinalUri + "&title=" + title);
+
+ 
+  const handleDownloadPress = async () => {
+    const filename = "trailler.mp4";
+    const fileUri = 'https://rr2---sn-h5qzen7s.googlevideo.com/videoplayback?expire=1715532216&ei=WJ1AZu6tJe6WhcIPqcWwiAs&ip=197.253.228.62&id=o-AH0B7fi8AUtvQ9EanLNhSPKV-pZMEQpESuuoD7rY2JTb&itag=160&aitags=133%2C160&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&siu=1&bui=AWRWj2S41NCJeOHIOAaR_xhmx6SDQgVQCXGS4TchE3YI8AOuAlxGYOeX-R6VHyCB7ipYXEpg9Q&spc=UWF9f2EwqID5A_e2StBxcLvQ1S_-WnnpaV3JOE4uVJfX5rV0zTFxKG1c1cPq6gYUAtTu&vprv=1&svpuc=1&mime=video%2Fmp4&ns=BzHcmEwReND9ZWAOPJsfoQYQ&rqh=1&gir=yes&clen=451172&dur=40.206&lmt=1709953662379682&keepalive=yes&c=WEB&sefc=1&txp=8219224&n=W5D1qWlT5WkfhA&sparams=expire%2Cei%2Cip%2Cid%2Caitags%2Csource%2Crequiressl%2Cxpc%2Csiu%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cdur%2Clmt&sig=AJfQdSswRAIgfJ4R1dP4sz4CliYOfkmKKHPDwbqwCSvlQGXLM-8eFCkCIFMIpwBQAL4DoZJUlzUY1_spbvvEt5R6cOXI0hqTopDa&pot=Ih86BzoGXEeReQs2CT4OMgMzAzIDNw0-AjcNNwM1DHtG&cm2rm=sn-hxqpuxa-jhod7e&req_id=b40f45367228a3ee&redirect_counter=2&rm=sn-h5q6s7l&cms_redirect=yes&cmsv=e&ipbypass=yes&mh=VQ&mip=197.253.220.94&mm=29&mn=sn-h5qzen7s&ms=rdu&mt=1715510442&mv=m&mvi=2&pl=19&lsparams=ipbypass,mh,mip,mm,mn,ms,mv,mvi,pl&lsig=AHWaYeowRQIhAO5E2VGnfZhE3jtFs8DJpD_nB4B_zx98VlH5WIhiVGZdAiBfRivs5Sl-ot-yfAIXFIiHJuDbKWPiyNQUQLVYPORW1w%3D%3D'; // your video URL here
+    Alert.alert(
+      "Link Generated",
+      "Downloading video...",
+      [{ text: "Cancel", onPress: () => "" }]
+    );
+    try {
+        const downloadResumable = FileSystem.createDownloadResumable(
+            fileUri,
+            FileSystem.documentDirectory + filename,
+            {},
+            (downloadProgress) => {
+                const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
+                const progressPercentage = Math.round(progress * 100);
+                Alert.alert(
+                    "Downloading video...",
+                    `Progress: ${progressPercentage}%`
+                );
+            }
+        );
+        const { uri } = await downloadResumable.downloadAsync();
+        saveFile(uri, filename, 'video/mp4');
+    } catch (error) {
+        console.error('Error initiating video download:', error.message);
+        Alert.alert('Error', 'Failed to initiate video download');
+    }
+};
+
+async function saveFile(uri, filename, mimetype) {
+    if (Platform.OS === "android") {
+        const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+        if (permissions.granted) {
+            const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+
+            await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, filename, mimetype)
+                .then(async (uri) => {
+                    await FileSystem.writeAsStringAsync(uri, base64, { encoding: FileSystem.EncodingType.Base64 });
+                })
+                .catch(e => console.log(e));
+                ToastAndroid.show('Download Complete', ToastAndroid.LONG);
+
+        } else {
+            shareAsync(uri);
+        }
+    } else {
+        shareAsync(uri);
+    }
+}
+
+
+  
     
-  };
   return (
     <View style={styles.container}>
       <View style={styles.topRow}>
@@ -109,13 +144,13 @@ const MovieInfoModal: React.FC<MovieInfoModalProps> = ({ movie }) => {
             {movie.overview}
           </Text>
           <View style={styles.iconContainer}>
-          <TouchableOpacity onPress={downloadFromUrl}>
-            <Ionicons name="download" size={24} color="#FFF" style={styles.linkIcon} />
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={handleMapIconPress}>
-            <Ionicons name="map" size={24} color="#FFF" style={styles.linkIcon} />
-          </TouchableOpacity>
+            <TouchableOpacity onPress={handleDownloadPress}>
+              <Ionicons name="download" size={24} color="#FFF" style={styles.linkIcon} />
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress={handleMapIconPress}>
+              <Ionicons name="map" size={24} color="#FFF" style={styles.linkIcon} />
+            </TouchableOpacity>
           </View>
         </View>
       </View>

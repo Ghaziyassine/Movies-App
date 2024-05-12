@@ -1,99 +1,113 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TextInput } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import MapView, { Marker } from 'react-native-maps';
+import { View, StyleSheet, Button, Linking } from "react-native";
+import MapView, { Marker, Polyline } from 'react-native-maps';
+import * as Location from 'expo-location';
+import polyline from '@mapbox/polyline';
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyBMxEhoXsi6NADSY-yNlubcUg8I1S2wLDg";
-const TMDB_API_KEY = "3c49560e86e331cecaa85fb1f10031fa";
-
 function MapScreen() {
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [locations, setLocations] = useState([]);
+  const [destination] = useState({
+    latitude: 33.2427716,
+    longitude: -8.4844258,
+  });
+  const [userLocation, setUserLocation] = useState(null);
+  const [routeCoordinates, setRouteCoordinates] = useState([]);
 
   useEffect(() => {
-    if (!search) {
-      setLocations([]);
+    getLocationAsync();
+  }, []);
+
+  const getLocationAsync = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.error('Permission to access location was denied');
       return;
     }
 
-    setLoading(true);
-    const fetchLocations = async () => {
-      try {
-        const response = await fetch(
-          `https://maps.googleapis.com/maps/api/place/textsearch/json?key=${GOOGLE_MAPS_API_KEY}&query=${search}`
-        );
-        const data = await response.json();
-        if (data.results) {
-          const cinemas = data.results;
-          const cinemasWithMovies = await Promise.all(cinemas.map(async (cinema) => {
-            const movies = await fetchMoviesForCinema(cinema.place_id);
-            return { ...cinema, movies };
-          }));
-          setLocations(cinemasWithMovies);
-        } else {
-          setLocations([]);
-        }
-      } catch (error) {
-        console.error("Error fetching locations:", error);
-        setLocations([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    let location = await Location.getCurrentPositionAsync({});
+    setUserLocation({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    });
+  };
 
-    fetchLocations();
-  }, [search]);
+  useEffect(() => {
+    if (userLocation) {
+      fetchRoute();
+    }
+  }, [userLocation]);
 
-  const fetchMoviesForCinema = async (cinemaId) => {
+  const fetchRoute = async () => {
     try {
       const response = await fetch(
-        `https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=fr&page=1&region=MA&with_cinema=${cinemaId}`
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${userLocation.latitude},${userLocation.longitude}&destination=${destination.latitude},${destination.longitude}&key=${GOOGLE_MAPS_API_KEY}`
       );
       const data = await response.json();
-      return data.results;
+      if (data.routes && data.routes.length > 0) {
+        const route = data.routes[0];
+        const routeCoordinates = decode(route.overview_polyline.points);
+        setRouteCoordinates(routeCoordinates);
+      }
     } catch (error) {
-      console.error("Error fetching movies for cinema:", error);
-      return [];
+      console.error("Error fetching route:", error);
     }
+  };
+
+  const handleDirections = () => {
+    const origin = `${userLocation.latitude},${userLocation.longitude}`;
+    const dest = `${destination.latitude},${destination.longitude}`;
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}`;
+    Linking.openURL(url);
+  };
+
+  // Helper function to decode polyline points
+  const decode = (t) => {
+    return polyline.decode(t).map((point) => {
+      return {
+        latitude: point[0],
+        longitude: point[1],
+      };
+    });
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchBox}>
-        <Ionicons
-          name="search-sharp"
-          size={24}
-          color="#C1C1C1"
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search for a location..."
-          placeholderTextColor="#C1C1C1"
-          value={search}
-          onChangeText={setSearch}
-        />
-      </View>
-      <MapView style={styles.map}>
-        {locations.map((location) => (
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: destination.latitude,
+          longitude: destination.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
+        showsUserLocation={true}
+      >
+        {userLocation && (
           <Marker
-            key={location.id}
             coordinate={{
-              latitude: location.geometry.location.lat,
-              longitude: location.geometry.location.lng,
+              latitude: userLocation.latitude,
+              longitude: userLocation.longitude,
             }}
-            title={location.name}
-            description={location.formatted_address}
-          >
-            {location.movies.map((movie, index) => (
-              <View key={index}>
-                <Text>{movie.title}</Text>
-              </View>
-            ))}
-          </Marker>
-        ))}
+            title="Your Location"
+            pinColor="blue"
+          />
+        )}
+        <Marker
+          coordinate={{
+            latitude: destination.latitude,
+            longitude: destination.longitude,
+          }}
+          title="Destination"
+        />
+        {routeCoordinates.length > 0 && (
+          <Polyline
+            coordinates={routeCoordinates}
+            strokeColor="#ff0000"
+            strokeWidth={2}
+          />
+        )}
       </MapView>
+      <Button title="Directions" onPress={handleDirections} />
     </View>
   );
 }
@@ -102,25 +116,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#000",
-    paddingHorizontal: 20,
-    paddingTop: 40,
-  },
-  searchBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-    backgroundColor: "#424242",
-    borderRadius: 20,
-    paddingHorizontal: 16,
-  },
-  searchIcon: {
-    marginRight: 15,
-  },
-  searchInput: {
-    flex: 1,
-    height: 60,
-    color: "#FFF",
-    fontSize: 18,
   },
   map: {
     flex: 1,
@@ -128,4 +123,3 @@ const styles = StyleSheet.create({
 });
 
 export default MapScreen;
-
