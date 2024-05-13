@@ -30,3 +30,6 @@ Run 🤠<br>
 
 Simple as that, then all you need to do is open Expo Go and scan the QR Code!<br>
 Or, if you prefer, run on a virtual device inside your computer.
+
+## collaborators 
+-https://github.com/ghita-baghdad
