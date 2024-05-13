@@ -15,7 +15,6 @@
     "@react-navigation/bottom-tabs": "^6.4.1",
     "@react-navigation/native": "^6.0.14",
     "@types/react": "~18.2.45",
-    "@types/react-native": "~0.70.6",
     "expo": "^51.0.2",
     "expo-av": "~14.0.4",
     "expo-location": "^17.0.1",
