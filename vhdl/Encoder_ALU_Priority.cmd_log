@@ -1,0 +1,12 @@
+xst -ise "C:/Xilinx/encoder_priority/encoder_priority" -intstyle ise -ifn Encoder_ALU_Priority.xst -ofn Encoder_ALU_Priority.syr
+ngdbuild -ise "C:/Xilinx/encoder_priority/encoder_priority" -intstyle ise -dd _ngo -nt timestamp -i -p xc2s50e-ft256-6 Encoder_ALU_Priority.ngc Encoder_ALU_Priority.ngd
+map -ise "C:/Xilinx/encoder_priority/encoder_priority" -intstyle ise -p xc2s50e-ft256-6 -cm area -pr b -k 4 -c 100 -tx off -o Encoder_ALU_Priority_map.ncd Encoder_ALU_Priority.ngd Encoder_ALU_Priority.pcf
+par -ise "C:/Xilinx/encoder_priority/encoder_priority" -w -intstyle ise -ol std -t 1 Encoder_ALU_Priority_map.ncd Encoder_ALU_Priority.ncd Encoder_ALU_Priority.pcf
+trce -ise "C:/Xilinx/encoder_priority/encoder_priority" -intstyle ise -e 3 -l 3 -s 6 -xml Encoder_ALU_Priority Encoder_ALU_Priority.ncd -o Encoder_ALU_Priority.twr Encoder_ALU_Priority.pcf
+bitgen -ise "C:/Xilinx/encoder_priority/encoder_priority" -intstyle ise -f Encoder_ALU_Priority.ut Encoder_ALU_Priority.ncd
+xst -ise "C:/Xilinx/encoder_priority/encoder_priority" -intstyle ise -ifn Encoder_ALU_Priority.xst -ofn Encoder_ALU_Priority.syr
+ngdbuild -ise "C:/Xilinx/encoder_priority/encoder_priority" -intstyle ise -dd _ngo -nt timestamp -i -p xc2s50e-ft256-6 Encoder_ALU_Priority.ngc Encoder_ALU_Priority.ngd
+map -ise "C:/Xilinx/encoder_priority/encoder_priority" -intstyle ise -p xc2s50e-ft256-6 -cm area -pr b -k 4 -c 100 -tx off -o Encoder_ALU_Priority_map.ncd Encoder_ALU_Priority.ngd Encoder_ALU_Priority.pcf
+par -ise "C:/Xilinx/encoder_priority/encoder_priority" -w -intstyle ise -ol std -t 1 Encoder_ALU_Priority_map.ncd Encoder_ALU_Priority.ncd Encoder_ALU_Priority.pcf
+trce -ise "C:/Xilinx/encoder_priority/encoder_priority" -intstyle ise -e 3 -l 3 -s 6 -xml Encoder_ALU_Priority Encoder_ALU_Priority.ncd -o Encoder_ALU_Priority.twr Encoder_ALU_Priority.pcf
+bitgen -ise "C:/Xilinx/encoder_priority/encoder_priority" -intstyle ise -f Encoder_ALU_Priority.ut Encoder_ALU_Priority.ncd

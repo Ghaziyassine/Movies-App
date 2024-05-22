@@ -1,0 +1,58 @@
+--------------------------------------------------------------------------------
+Release 8.1i Trace I.24
+Copyright (c) 1995-2005 Xilinx, Inc.  All rights reserved.
+
+C:\Xilinx\bin\nt\trce.exe -ise encoder_priority.ise -intstyle ise -e 3 -l 3 -s
+6 -xml Encoder_ALU_Priority Encoder_ALU_Priority.ncd -o
+Encoder_ALU_Priority.twr Encoder_ALU_Priority.pcf
+
+
+Design file:              encoder_alu_priority.ncd
+Physical constraint file: encoder_alu_priority.pcf
+Device,speed:             xc2s50e,-6 (PRODUCTION 1.18 2005-11-04)
+Report level:             error report
+
+Environment Variable      Effect 
+--------------------      ------ 
+NONE                      No environment variables were set
+--------------------------------------------------------------------------------
+
+INFO:Timing:2698 - No timing constraints found, doing default enumeration.
+INFO:Timing:2752 - To get complete path coverage, use the unconstrained paths
+   option. All paths that are not constrained will be reported in the
+   unconstrained paths section(s) of the report.
+
+
+Data Sheet report:
+-----------------
+All values displayed in nanoseconds (ns)
+
+Pad to Pad
+---------------+---------------+---------+
+Source Pad     |Destination Pad|  Delay  |
+---------------+---------------+---------+
+I<0>           |ALU_out<0>     |    7.928|
+I<1>           |A<0>           |    8.641|
+I<1>           |ALU_out<0>     |    7.932|
+I<1>           |ALU_out<1>     |    7.905|
+I<1>           |ALU_out<2>     |    8.314|
+I<2>           |A<0>           |    8.650|
+I<2>           |A<1>           |   10.162|
+I<2>           |ALU_out<0>     |    8.006|
+I<2>           |ALU_out<1>     |    8.071|
+I<2>           |ALU_out<2>     |    8.323|
+I<2>           |ALU_out<3>     |    9.956|
+I<3>           |A<0>           |    9.736|
+I<3>           |A<1>           |   10.236|
+I<3>           |ALU_out<0>     |    7.998|
+I<3>           |ALU_out<1>     |    8.136|
+I<3>           |ALU_out<2>     |    9.409|
+I<3>           |ALU_out<3>     |   10.383|
+---------------+---------------+---------+
+
+Analysis completed Sun May 19 18:05:32 2024
+--------------------------------------------------------------------------------
+
+
+
+Peak Memory Usage: 177 MB

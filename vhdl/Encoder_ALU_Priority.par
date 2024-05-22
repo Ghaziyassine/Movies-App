@@ -1,0 +1,140 @@
+Release 8.1i par I.24
+Copyright (c) 1995-2005 Xilinx, Inc.  All rights reserved.
+
+DESKTOP-MBGF2SD::  Sun May 19 18:05:28 2024
+
+par -w -intstyle ise -ol std -t 1 Encoder_ALU_Priority_map.ncd
+Encoder_ALU_Priority.ncd Encoder_ALU_Priority.pcf 
+
+
+Constraints file: Encoder_ALU_Priority.pcf.
+Loading device for application Rf_Device from file '2s50e.nph' in environment C:\Xilinx.
+   "Encoder_ALU_Priority" is an NCD, version 3.1, device xc2s50e, package ft256, speed -6
+
+Initializing temperature to 85.000 Celsius. (default - Range: -40.000 to 85.000 Celsius)
+Initializing voltage to 1.700 Volts. (default - Range: 1.700 to 1.900 Volts)
+
+INFO:Par:282 - No user timing constraints were detected or you have set the option to ignore timing constraints ("par
+   -x"). Place and Route will run in "Performance Evaluation Mode" to automatically improve the performance of all
+   internal clocks in this design. The PAR timing summary will list the performance achieved for each clock. Note: For
+   the fastest runtime, set the effort level to "std".  For best performance, set the effort level to "high". For a
+   balance between the fastest runtime and best performance, set the effort level to "med".
+
+Device speed data version:  "PRODUCTION 1.18 2005-11-04".
+
+
+Device Utilization Summary:
+
+   Number of External IOBs            10 out of 178     5%
+      Number of LOCed IOBs             0 out of 10      0%
+
+   Number of SLICEs                    3 out of 768     1%
+
+
+Overall effort level (-ol):   Standard 
+Placer effort level (-pl):    High 
+Placer cost table entry (-t): 1
+Router effort level (-rl):    Standard 
+
+
+Starting Placer
+
+Phase 1.1
+Phase 1.1 (Checksum:989699) REAL time: 0 secs 
+
+Phase 2.31
+Phase 2.31 (Checksum:1312cfe) REAL time: 0 secs 
+
+Phase 3.23
+Phase 3.23 (Checksum:1c9c37d) REAL time: 0 secs 
+
+Phase 4.3
+Phase 4.3 (Checksum:26259fc) REAL time: 0 secs 
+
+Phase 5.5
+Phase 5.5 (Checksum:2faf07b) REAL time: 0 secs 
+
+Phase 6.8
+.
+.
+.
+.
+Phase 6.8 (Checksum:98e26f) REAL time: 0 secs 
+
+Phase 7.5
+Phase 7.5 (Checksum:42c1d79) REAL time: 0 secs 
+
+Phase 8.18
+Phase 8.18 (Checksum:4c4b3f8) REAL time: 0 secs 
+
+Phase 9.5
+Phase 9.5 (Checksum:55d4a77) REAL time: 0 secs 
+
+Writing design to file Encoder_ALU_Priority.ncd
+
+
+Total REAL time to Placer completion: 0 secs 
+Total CPU time to Placer completion: 0 secs 
+
+Starting Router
+
+Phase 1: 23 unrouted;       REAL time: 0 secs 
+
+Phase 2: 23 unrouted;       REAL time: 0 secs 
+
+Phase 3: 4 unrouted;       REAL time: 0 secs 
+
+Phase 4: 4 unrouted; (0)      REAL time: 0 secs 
+
+Phase 5: 4 unrouted; (0)      REAL time: 0 secs 
+
+Phase 6: 0 unrouted; (0)      REAL time: 0 secs 
+
+Phase 7: 0 unrouted; (0)      REAL time: 0 secs 
+
+Phase 8: 0 unrouted; (0)      REAL time: 0 secs 
+
+Total REAL time to Router completion: 0 secs 
+Total CPU time to Router completion: 0 secs 
+
+Generating "PAR" statistics.
+
+
+   The Delay Summary Report
+
+
+The NUMBER OF SIGNALS NOT COMPLETELY ROUTED for this design is: 0
+
+   The AVERAGE CONNECTION DELAY for this design is:        1.411
+   The MAXIMUM PIN DELAY IS:                               2.586
+   The AVERAGE CONNECTION DELAY on the 10 WORST NETS is:   1.638
+
+   Listing Pin Delays by value: (nsec)
+
+    d < 1.00   < d < 2.00  < d < 3.00  < d < 4.00  < d < 5.00  d >= 5.00
+   ---------   ---------   ---------   ---------   ---------   ---------
+           7          11           5           0           0           0
+
+Timing Score: 0
+
+Generating Pad Report.
+
+All signals are completely routed.
+
+Total REAL time to PAR completion: 1 secs 
+Total CPU time to PAR completion: 1 secs 
+
+Peak Memory Usage:  178 MB
+
+Placement: Completed - No errors found.
+Routing: Completed - No errors found.
+
+Number of error messages: 0
+Number of warning messages: 0
+Number of info messages: 1
+
+Writing design to file Encoder_ALU_Priority.ncd
+
+
+
+PAR done!
