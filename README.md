@@ -1,4 +1,6 @@
-#the movies db
+
+
+
 This is a personal project created for a college assignment.<br>
 This application  shows information about movies, series.It also display the nearest cinema using google map<br>
 This was created using TypeScript, ReactNative, Expo.<br>
