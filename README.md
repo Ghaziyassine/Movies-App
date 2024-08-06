@@ -1,7 +1,7 @@
 # <img alt="TMDB Logo" width="500px" src="src/assets/tmdb-long-logo.png" />
 
 This is a personal project created for a college assignment.<br>
-This application that shows information about movies, series.It also display the nearest cinema using google map<br>
+This application  shows information about movies, series.It also display the nearest cinema using google map<br>
 This was created using TypeScript, ReactNative, Expo.<br>
 Thanks to <a href="https://www.themoviedb.org">The Movie Database</a> for providing an awesome API that made this project possible 🤠<br>
 
