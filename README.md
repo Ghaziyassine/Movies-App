@@ -1,4 +1,3 @@
-# <img alt="TMDB Logo" width="500px" src="src/assets/tmdb-long-logo.png" />
 
 This is a personal project created for a college assignment.<br>
 This application  shows information about movies, series.It also display the nearest cinema using google map<br>
